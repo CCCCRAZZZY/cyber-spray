@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+ <head>
+   <title>Cyber Spray</title>
+   <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMKDTz8zEoBu1yJkYw0t_0IH4sHMgx-VI1TA&s" />
+</head>
+
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      cursor: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-1TXxNpluNsrno48L5wwjHCz6PvDlg9b8Vw&s'), auto;
+      background-image: url('file:///C:/Users/daire/Downloads/Untitled.png');
+      background-size: cover;
+      background-position: center;
+    }
+    #canvas-container {
+      background-color: #eee;
+      width: 310px;
+      height: 300px;
+      border: 1px solid #ccc;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    #myCanvas {
+      background-color: #eee;
+      cursor: crosshair;
+    }
+    #controls {
+      margin-top: 10px;
+    }
+
+	#update{
+	color: blue;
+	}
+    .container img {
+      max-width: 50%; /* Makes the image half its original size */
+      height: auto;
+    }
+    #wall {
+      width: calc(100% + 56px); /* 100% plus extra */
+      margin-left: -30px;      /* Offset for body padding */
+      height: 500px;
+      display: flex;
+      flex-wrap: wrap;
+      background-color: #eee;
+      background-image: url(''); /* Insert your image URL here */
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .wall-piece {
+      width: 100px;
+      height: 100px;
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    button {
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    /* Style for the drawing counter text */
+    #drawingCounter {
+      color: white;
+      -webkit-text-stroke: 1px blue;
+      font-size: 18px;
+      margin-top: 10px;
+    }
+    .container {
+	background-image:url('data:image/png;base64,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');
+      width: 600px; /* Adjust as needed */
+      padding: 10px;
+      border: 1px solid black;
+    }
+    .container img {
+      width: 300px; /* Smaller image size */
+      height: auto;
+      display: block;
+      margin: 5px auto;
+    }
+    #addButton {
+      background-color: #16E9AA;
+	  color: white;
+    font-size: 18px;
+    padding: 15px 30px;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    position: relative;
+    transition: box-shadow 0.3s ease;
+    }
+	#clearButton {
+      background-color: #FFFFFF;
+	  color: red;
+    font-size: 18px;
+    padding: 15px 30px;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    position: relative;
+    transition: box-shadow 0.3s ease;
+    }
+	#clearButton:hover {
+    box-shadow: 0 0 15px rgba(140, 24, 24, 0.8), 0 0 30px rgba(140, 24, 24, 50);
+	}
+	#clearButton:active {
+     background-color: black;
+	}
+	#downloadButton:active {
+     background-color: #00d5ff;
+	}
+	#addButton:active {
+     background-color: #fff700;
+	}
+	.h2{
+	color: blue;
+	}
+	#addButton:hover {
+    box-shadow: 0 0 15px rgba(131, 243, 109, 0.8), 0 0 30px rgba(131, 243, 109, 50);
+}
+
+    #downloadButton {
+    background-color: #519BE1;
+    color: white;
+    font-size: 18px;
+    padding: 15px 30px;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    position: relative;
+    transition: box-shadow 0.3s ease;
+}
+
+#downloadButton:hover {
+    box-shadow: 0 0 15px rgba(0, 84, 163, 0.8), 0 0 30px rgba(0, 83, 163, 50);
+}
+    /* New CSS for the horizontal swipe gallery */
+    #wallGallery {
+      width: calc(100% + 38px);
+      margin-left: -30px;
+      height: 120px;
+      overflow-x: auto;
+      background-color: #222;
+      display: flex;
+      align-items: center;
+      padding: 10px;
+    }
+    #wallGallery div {
+      position: relative;
+      margin-right: 10px;
+    }
+    #wallGallery div {
+   position: relative;
+   margin-right: 10px;
+}
+	
+	#music-btn {
+    position: absolute;
+    top: 500px; /* Change this to move vertically */
+    left: 1170px; /* Change this to move horizontally */
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #ffcc00;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+#music-btn:hover {
+    background-color: #ffaa00;
+}
+  </style>
+  <!-- Including html2canvas from CDN for screenshot functionality -->
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+</head>
+<body>
+<h1></h1>
+  </br></br></br></br></br>
+  <h2>Editable Backdrop Canvas</h2>
+
+  <div id="canvas-container">
+    <canvas id="myCanvas" width="300" height="300"></canvas>
+  </div>
+  
+  <input type="color" id="colorPicker">
+  <div id="controls">
+    <button id="addButton">ADD!</button>
+    <button id="downloadButton">Download</button>
+    <!-- Clear button to clear the canvas drawing area -->
+    <button id="clearButton">Clear Canvas</button>
+  </div>
+  <h3>Online Wall</h3>
+  <p id="dynamicText" style="position: absolute; left: 1000px; top: 20px;"></p>
+  <div id="wall"></div>
+  <!-- Horizontal swipe gallery for archived walls -->
+  <h3>Wall Gallery (coming soon)</h3>
+  <div id="wallGallery"></div>
+  <!-- New drawing counter element -->
+  <div id="drawingCounter"></div>
+  </br><P> Theme: Messing around</br></br></br>
+  <h4>Other stuff💀</h4>
+<button id="music-btn" onclick="playMusic()">🎵 Play Music</button>
+<iframe id="bg-music" width="0" height="0" src="" allow="autoplay"></iframe>
+  <p>Hi thank you so much for reading this!😎 I just wanna say for now this webpage is in a very early stage😓 so if you want to help like by saying what should be added or removed please do on my Tiktok, say cool😁😊:</p>
+  <div class="container">
+    <button TikTok <a href="https://www.youtube.com/" target="_blank">YouTube</a></button>
+
+
+  </div>
+  <audio id="drawingSound" src="spray-paint-beautiful-way.mp3"></audio>
+  <audio id="downloadButton" src="https://www.myinstants.com/en/instant/tuco-get-out-30566/"></audio>
+<script>
+    function checkFirstVisit() {
+        // Retrieve the 'visited' flag from local storage
+        const visitedFlag = localStorage.getItem('visited');
+
+        // Check if the 'visited' flag is null or undefined
+        if (visitedFlag === null || visitedFlag === undefined) {
+            // User is visiting for the first time
+            alert("Welcome, Sponsorship Skyscrapers! It is a new digital platform showcasing your name or your company's name to the WORLD by buying cheap Skyscrapers or donating, enjoy and have fun❤👍   -Master.");
+
+            // Set the 'visited' flag in local storage
+            localStorage.setItem('visited', true);
+        } else {
+            // User has visited before
+            alert("Hello!");
+        }
+    }
+
+    // Call the function when the page loads
+    checkFirstVisit();
+
+    const canvas = document.getElementById('myCanvas');
+    const ctx = canvas.getContext('2d');
+    const colorPicker = document.getElementById('colorPicker');
+    const addButton = document.getElementById('addButton');
+    const clearButton = document.getElementById('clearButton');
+    const wall = document.getElementById('wall');
+    const drawingCounter = document.getElementById('drawingCounter');
+    const wallGallery = document.getElementById('wallGallery');
+    let currentColor = '#000000';
+    let drawing = false;
+    let processingReset = false; // Flag to avoid duplicate additions
+
+    function playMusic() {
+        let musicFrame = document.getElementById("bg-music");
+        musicFrame.src = "https://www.youtube.com/embed/5BDPZn7COz4?autoplay=1&loop=1&playlist=5BDPZn7COz4";
+    }
+
+    function updateDynamicText() {
+        const dynamicTextElement = document.getElementById('dynamicText');
+        const dynamicTextLines = [
+            "HAVE FUN🤩",
+            "Today's challenge: Draw a brick",
+            "Today's challenge: Draw Mona Lisa",
+            "Today's challenge: Draw an upside down T😳",
+            " NO PAY TO WIN!",
+            "Today's challenge: Draw CIA documents ",
+            "Today's challenge: Draw a hyper realistic toe🦶",
+            "Today's challenge: Draw your flag",
+            "Today's challenge: Draw collaboratively🤝",
+            "No annoying ads!😍",
+            "No censorship( unless it's real bad💀)",
+            "Today's challenge: Draw your credit card info🧐",
+            "Today's challenge: Draw cool S",
+            "Today's challenge: Draw anything!",
+            "Today's challenge: Draw your inner demons😡",
+            " No cookies, you are sweet enough!🍪",
+        ];
+        const randomIndex = Math.floor(Math.random() * dynamicTextLines.length);
+        dynamicTextElement.textContent = dynamicTextLines[randomIndex];
+        dynamicTextElement.style.color = "white";
+        dynamicTextElement.style.textShadow = "-1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black";
+    }
+
+    function startDrawing(e) {
+        drawing = true;
+        draw(e);
+    }
+
+    function draw(e) {
+        if (!drawing) return;
+        ctx.fillStyle = currentColor;
+        for (let i = 0; i < 10; i++) {
+            let offsetX = e.offsetX + (Math.random() * 10 - 5);
+            let offsetY = e.offsetY + (Math.random() * 10 - 5);
+            ctx.beginPath();
+            ctx.arc(offsetX, offsetY, 1, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    function stopDrawing() {
+        drawing = false;
+    }
+
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseout', stopDrawing);
+
+    colorPicker.addEventListener('input', function() {
+        currentColor = colorPicker.value;
+    });
+
+    function updateCounter() {
+        let savedWall = JSON.parse(localStorage.getItem('savedWall')) || [];
+        let remaining = 60 - savedWall.length;
+        drawingCounter.textContent = `${remaining} drawing(s) until reset`;
+    }
+
+    window.addEventListener('load', function() {
+        let savedWall = JSON.parse(localStorage.getItem('savedWall')) || [];
+        savedWall.forEach(imgData => {
+            const piece = document.createElement('div');
+            piece.classList.add('wall-piece');
+            piece.style.backgroundImage = `url(${imgData})`;
+            wall.appendChild(piece);
+        });
+        updateCounter();
+    });
+
+    window.addEventListener('load', function() {
+        updateDynamicText();
+        setInterval(updateDynamicText, 5000);
+    });
+
+    // Add drawing to the wall when the "Add" button is clicked
+    addButton.addEventListener('click', function() {
+        if (processingReset) return; // Avoid duplicate additions
+
+        // Convert the canvas content to a data URL
+        const imageData = canvas.toDataURL('image/png');
+
+        // Save to localStorage
+        let savedWall = JSON.parse(localStorage.getItem('savedWall')) || [];
+        savedWall.push(imageData);
+        localStorage.setItem('savedWall', JSON.stringify(savedWall));
+
+        // Add the image to the wall
+        const piece = document.createElement('div');
+        piece.classList.add('wall-piece');
+        piece.style.backgroundImage = `url(${imageData})`;
+        wall.appendChild(piece);
+
+        // Update the counter
+        updateCounter();
+    });
+	// Function to download the canvas image
+function downloadCanvas() {
+    const canvasImage = canvas.toDataURL('image/png'); // Get the image data from the canvas
+    const link = document.createElement('a');
+    link.href = canvasImage; // Set the href to the image data
+    link.download = 'BestDraWingEVA😍'; // Set the file name for the download
+    link.click(); // Trigger the download
+}
+
+// Add event listener to the download button
+const downloadButton = document.getElementById('downloadButton'); // Replace with your actual button ID
+downloadButton.addEventListener('click', downloadCanvas);
+  
+
+
+</script>
+
+
+
+</body>
+</html>
